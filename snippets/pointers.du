@@ -1,0 +1,18 @@
+test pointers {
+	const aligned: u8 align(4) = 100;
+	const single = &aligned;
+	expect_equal(a.*, 3);
+	expect_equal(aligned.alignment, 4);
+
+	// tracking sentinel termination is useful for c strings
+	const sentinel: [:0]u8 = [1,  2, 3];
+	expect_equal(sentinel.ptr + sentinel.len, 0);
+
+	const c_string: [*:0]u8 = sentinel;
+	expect_equal(sentinel, c_string);
+
+	// functions can be aligned
+	expect_equal(noop1.alignment, 1);
+}
+
+fn noop1() align(1) void {}

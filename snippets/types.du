@@ -1,0 +1,23 @@
+fn main() u8 {
+	const a1: i8 = 1;
+	const a2: u8 = 2;
+	const a3: i16 = 3;
+	const a4: u16 = 4;
+	const a5: i32 = 5;
+	const a6: u32 = 6;
+	const a7: i64 = 7;
+	const a8: u64 = 8;
+	const a9: isize = 9;
+	const a10: usize = 10;
+	const a11: f32 = 11.2;
+	const a12: f64 = 12.3;
+	const a13: *allowzero void = 13;
+	const a14: comptime_int = 14;
+	const a15: comptime_float = 15;
+	const a16: bool = true;
+	const a17: type = u8;
+	const a18: void;
+
+	const sum: comptime_int = a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9 + a10 + a11.floor() + a12.ceil() + a13.* + a14 + a15 + a16 + a17.id + a18.n_bits;
+	return sum;
+}

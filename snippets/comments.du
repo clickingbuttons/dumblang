@@ -1,0 +1,7 @@
+//! This is a module doc.
+
+/// This is a function doc.
+fn main() u8 {
+	// This is a comment.
+	return 0;
+}

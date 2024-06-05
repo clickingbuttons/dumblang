@@ -1,0 +1,97 @@
+pub type FruitExhaustive = enum {
+	banana,
+	strawberry,
+	kiwi,
+
+	test {
+		expect_equal(FruitExhaustive.Int, u8);
+
+		expect_equal(FruitExhaustive.banana, 0);
+		var runtime_int: u8 = 4;
+		_ = &runtime_int;
+		expect_equal(FruitExhaustive.init(runtime_int), .Unenumerated{ .value = 4 });
+	}
+};
+
+// Acts like an int type.
+pub type Fruit = enum u8 {
+	banana,
+	strawberry,
+	kiwi,
+	_,
+
+	test {
+		var runtime_int: u8 = 4;
+		_ = &runtime_int;
+		expect_equal(Fruit.init(runtime_int), runtime_int);
+	}
+};
+
+// Struct members are laid out according to C ABI.
+pub type Rect = struct {
+	width: u8,
+	height: u8,
+
+	fn area(self: Rect) u8 {
+		return self.width * self.height;
+	}
+
+	fn grow2(self: *Rect, amount: u8) {
+		self.width += amount;
+		self.height += amount;
+	}
+};
+
+type RectangularPrism = struct {
+	...Rect, // by default inherits fields AND declarations
+	depth: u8,
+
+	// overrides allowed
+	fn area(self: RectangularPrism) u8 {
+		return Rect.area(self) * self.depth;
+	}
+
+	test {
+		var cube = RectangularPrism{ .width = 1, .height = 2, .depth = 3 };
+		expect_equal(cube.area(), 8);
+		cube.grow2(1);
+		expect_equal(cube.area(), 18);
+	}
+};
+
+test tuples {
+	const tuple = .{ "member1", 2, Fruit.kiwi };
+	expect_equal(tuple[0], "member1");
+}
+
+type Flags = struct u16 {
+	// Layout is big endian. May be converted to/from int type.
+	// value: 0000_0000_0000_0000
+	// field: 1223_3333_3444_4444
+	f1: bool,
+	// Integer types are permitted to have bit widths besides 8, 16, 32, and 64.
+	f2: enum(u2) { on, off, indeterminate },
+	f3: u6,
+	f4: u7,
+
+	test {
+		const flags = Flags{ .f1 = true, .f2 = .indeterminate, .f3 = u6.max, .f4 = 0 };
+		expect_equal(flags, 0b1111_1111_1000_0000);
+	}
+};
+
+// Memory layout:
+// -  tag: enum
+// - value: [max_type_size]u8
+//   - laid out according to C ABI.
+type Tagged = union {
+	small: i8,
+	big: f32,
+
+	test {
+		var tagged = TaggedUnion.small(3);
+		expect_equal(tagged.tag, .small);
+		// A C-compatible union value.
+		expect_equal(tagged.value, i32(1));
+	}
+};

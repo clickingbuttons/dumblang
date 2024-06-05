@@ -1,0 +1,17 @@
+type Unreal = struct {
+	real: i64,
+	imaginary: i64,
+
+	operator fn @"++"(self: Unreal, rhs: Unreal) Unreal {
+		return Unreal{
+			.real = self.real + rhs.real,
+			.imaginary = self.imaginary + rhs.imaginary;
+		};
+	}
+
+	test {
+		const a = Unreal{ .real = 1, .imaginary = 2 };
+		const b = Unreal{ .real = 3, .imaginary = 4 };
+		expect_equal(a ++ b, Unreal{ 4, 6 })!;
+	}
+};

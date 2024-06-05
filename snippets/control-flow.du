@@ -1,0 +1,66 @@
+test switch {
+	const containers = @import("./containers.du");
+
+	const Fruit = containers.Fruit;
+	const FruitExhaustive = containers.FruitExhaustive;
+
+	var runtime_fruit = Fruit.kiwi;
+	_ = &runtime_fruit;
+
+	var color = switch (runtime_fruit) {
+		.banana => "yellow",
+		.strawberry => "red",
+		.kiwi => "green",
+		_ => {
+			runtime_fruit = .kiwi;
+			yield "unknown but now green";
+		},
+	};
+	expect_equal(color, "green")!;
+
+	var runtime_fruit_exh = FruitExhaustive(9);
+	_ = &runtime_fruit_exh;
+	color = switch (runtime_fruit_exh) {
+		.banana => "yellow",
+		.strawberry => "red",
+		.kiwi => "green",
+	};
+	expect_equal(color, "green")!;
+}
+
+test if {
+	if (true) expect(true);
+
+	if (?u8(32)) |o| expect_equal(o, 32)!;
+}
+
+test for {
+	const msg = "0123";
+
+	// C-style
+	var sum: u64 = 0;
+	for (var n: u64 = 0; n < 10; n += 2) sum += n;
+	expect_equal(sum, 20)!;
+
+	// Can iterate over slices or sentinel terminated arrays.
+	// The optionally captured `i` is the type used to iterate over `msg`.
+	for (msg) |c: u8, i: usize| expect_equal(c, msg[i])!;
+}
+
+test catch {
+	always_errors() catch |e| expect_equal(e, .broken)!;
+}
+
+fn always_errors() i32!enum{ broken } {
+	return .broken;
+}
+
+test defer {
+	var list = std.ArrayList(u8);
+	{
+		defer list.push(1);
+		defer list.push(2);
+		defer list.push(3);
+	}
+	expect_equal(list.items, u8[3, 2, 1])!;
+}

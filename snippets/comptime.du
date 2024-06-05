@@ -1,0 +1,20 @@
+test "comptime for" {
+	const a = comptime {
+		var res = u8[];
+		for (0..4) |i| res += i;
+		yield res;
+	};
+	expect_equal(a, u8[1,2,3])!;
+
+	const T = struct {
+		int: @Int(.signed, a.sum() + 2),
+	};
+	expect_equal(T, struct{ int: i8 })!;
+}
+
+test fields {
+	const containers = @import("./containers.du");
+	for (containers.Flags.fields) |f, i| {
+		expect_equal(f.name, "f" + i.fmt("{}"))!;
+	}
+}

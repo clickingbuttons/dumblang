@@ -1,12 +1,10 @@
 test switch {
 	const containers = @import("./containers.du");
-
 	const Fruit = containers.Fruit;
 	const FruitExhaustive = containers.FruitExhaustive;
 
 	var runtime_fruit = Fruit.kiwi;
 	_ = &runtime_fruit;
-
 	var color = switch (runtime_fruit) {
 		.banana => "yellow",
 		.strawberry => "red",
@@ -29,7 +27,7 @@ test switch {
 }
 
 test if {
-	if (true) expect(true);
+	if (true) expect(true)!;
 
 	if (?u8(32)) |o| expect_equal(o, 32)!;
 }

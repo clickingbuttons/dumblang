@@ -5,11 +5,11 @@ interface Stream {
 	copier: ?*fn(to: *Stream, from: *Stream) size!Error;
 	writer: ?*fn(s: *Stream, buf: const []u8) size!Error;
 
-	type Size = usize;
-	type Offset = isize;
-	type EOF = void;
-	type Error = union{ premature_end: size };
-	type Whence = enum {
+	const Size = usize;
+	const Offset = isize;
+	const EOF = void;
+	const Error = union{ premature_end: size };
+	const Whence = enum {
 		SET = 0, // Relative to beginning (i.e. set absolute position).
 		CUR = 1, // Relative to current position.
 		END = 2, // Relative to end of handle.

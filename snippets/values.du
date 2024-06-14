@@ -1,7 +1,7 @@
 const print = std.debug.print;
 const std = @import("std");
 const assert = std.debug.assert;
-enum Error{ ArgNotFound };
+const Error = enum { ArgNotFound };
 
 fn main() {
 	// integers
@@ -14,8 +14,8 @@ fn main() {
 
 	// boolean
 	print("{}\n{}\n{}\n",
-		true and false,
-		true or false,
+		true && false,
+		true || false,
 		!true,
 	);
 

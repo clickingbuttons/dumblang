@@ -1,4 +1,4 @@
-pub type FruitExhaustive = enum {
+pub const FruitExhaustive = enum {
 	banana,
 	strawberry,
 	kiwi,
@@ -14,7 +14,7 @@ pub type FruitExhaustive = enum {
 };
 
 // Acts like an int type.
-pub type Fruit = enum u8 {
+pub const Fruit = enum u8 {
 	banana,
 	strawberry,
 	kiwi,
@@ -28,7 +28,7 @@ pub type Fruit = enum u8 {
 };
 
 // Struct members are laid out according to C ABI.
-pub type Rect = struct {
+pub const Rect = struct {
 	width: u8,
 	height: u8,
 
@@ -42,7 +42,7 @@ pub type Rect = struct {
 	}
 };
 
-type RectangularPrism = struct {
+const RectangularPrism = struct {
 	...Rect, // by default inherits fields AND declarations
 	depth: u8,
 
@@ -64,7 +64,7 @@ test tuples {
 	expect_equal(tuple[0], "member1");
 }
 
-type Flags = struct u16 {
+const Flags = struct u16 {
 	// Layout is big endian. May be converted to/from int type.
 	// value: 0000_0000_0000_0000
 	// field: 1223_3333_3444_4444
@@ -84,7 +84,7 @@ type Flags = struct u16 {
 // -  tag: enum
 // - value: [max_type_size]u8
 //   - laid out according to C ABI.
-type Tagged = union {
+const Tagged = union {
 	small: i8,
 	big: f32,
 

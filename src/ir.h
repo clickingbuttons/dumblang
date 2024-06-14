@@ -15,58 +15,63 @@ typedef enum {
 	f32,
 	f64,
 	ptr,
-} ir_Type;
+} Type;
 
 typedef struct {
-	enum {
-		add,
-		cast,
-	} tag;
-	union {
-		ir_Type to;
-	} val;
-} ir_Op;
-
-typedef struct {
-	ir_Type tag;
+	Type tag;
 	union {
 		uint8_t  u8;
 		uint16_t  u16;
 		uint32_t  u32;
 		uint64_t  u64;
-		float f;
-		double d;
+		int8_t  i8;
+		int16_t i16;
+		int32_t i32;
+		int64_t i64;
+		float f32;
+		double f64;
 		size_t ptr;
 	} value;
-} ir_Immediate;
+} Immediate;
 
-typedef uint8_t ir_Register;
+typedef struct {
+	const char* name;
+	Type type;
+} Variable;
 
 typedef struct {
 	enum {
-		register_,
+		variable,
 		memory,
 		immediate,
 	} tag;
 	union {
-		ir_Register reg;
+		Variable variable;
 		// TODO: memory
-		ir_Immediate immediate;
+		Immediate immediate;
 	} arg;
-} ir_Arg;
+} Arg;
 
 typedef struct {
-	ir_Op op;
-	ir_Arg dst;
-	ir_Arg src;
-} ir_Instruction;
+	enum {
+		mov,
+		add,
+		cast,
+	} tag;
+	union {
+		struct{} mov;
+		struct{} add;
+		Type cast;
+	} val;
+} Op;
 
 typedef struct {
-	const char* name;
-	ir_Immediate default_;
-} ir_Variable;
+	Op op;
+	Arg dst;
+	Arg src;
+} Instruction;
 
 typedef struct {
-	ir_Variable* vars;
-	ir_Instruction* instructions;
-} ir_Function;
+	Variable* vars;
+	Instruction* instructions;
+} Function;

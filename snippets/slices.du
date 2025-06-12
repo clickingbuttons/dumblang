@@ -1,12 +1,12 @@
 test slices {
-	const args = []const u8["1", "2", "3", "4"];
-	expect_equal_strings(args[0], "1")!;
-	expect_equal(args.len, 4)!;
+	args = []const u8['1', '2', '3', '4']
+	assert args[0] == "1"
+	assert args.len == 4
 
-	var sum =  args.map(s => u8.parse(s)!).sum();
-	expect_equal(sum, 10)!;
+	sum = args.map(s => u8.parse(s)!).sum()
+	assert sum == 10
 
-	sum = 0;
-	for (args) |s| sum += u8.parse(s)!;
-	expect_equal(sum, 10)!;
+	sum = 0
+	for args |s| sum += u8.parse(s)!
+	assert sum == 10
 }

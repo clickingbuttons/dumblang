@@ -1,70 +1,67 @@
-pub const FruitExhaustive = enum {
+// Coerces to u8
+pub enum Fruit {
+	banana,
+	strawberry,
+	kiwi,
+	_, // means accepts any other value
+
+	test {
+		assert Fruit(4) == 4
+	}
+};
+
+// Throws when initialized with non-int type
+pub enum FruitExhaustive {
 	banana,
 	strawberry,
 	kiwi,
 
 	test {
-		expect_equal(FruitExhaustive.Int, u8);
+		assert FruitExhaustive.Int == u8
+		assert banana == 0
 
-		expect_equal(FruitExhaustive.banana, 0);
-		var runtime_int: u8 = 4;
-		_ = &runtime_int;
-		expect_equal(FruitExhaustive.init(runtime_int), .Unenumerated{ .value = 4 });
+		assert FruitExhaustive(3) == .Unenumerated
 	}
 };
 
-// Acts like an int type.
-pub const Fruit = enum u8 {
-	banana,
-	strawberry,
-	kiwi,
-	_,
 
-	test {
-		var runtime_int: u8 = 4;
-		_ = &runtime_int;
-		expect_equal(Fruit.init(runtime_int), runtime_int);
-	}
-};
-
-// Struct members are laid out according to C ABI.
-pub const Rect = struct {
+// Class members are laid out according to C's struct ABI.
+pub class Rect {
 	width: u8,
 	height: u8,
 
-	fn area(self: Rect) u8 {
-		return self.width * self.height;
-	}
+	// By default a `this` member is available.
+	fn area() u8 => this.width * this.height
 
-	fn grow2(self: *Rect, amount: u8) {
-		self.width += amount;
-		self.height += amount;
+	fn grow2(amount: u8) {
+		this.width += amount;
+		this.height += amount;
 	}
 };
 
-const RectangularPrism = struct {
-	...Rect, // by default inherits fields AND declarations
+class RectangularPrism extends Rect {
+	// ...Rect, // this syntax would only inherit fields, not decls
 	depth: u8,
 
 	// overrides allowed
-	fn area(self: RectangularPrism) u8 {
-		return Rect.area(self) * self.depth;
-	}
+	fn area() u8 => Rect.area(self) * self.depth,
 
 	test {
-		var cube = RectangularPrism{ .width = 1, .height = 2, .depth = 3 };
-		expect_equal(cube.area(), 8);
+		cube = RectangularPrism{ .width = 1, .height = 2, .depth = 3 }
+		assert cube.area() == 8
 		cube.grow2(1);
-		expect_equal(cube.area(), 18);
+		assert cube.area() == 18
 	}
 };
 
 test tuples {
-	const tuple = .{ "member1", 2, Fruit.kiwi };
-	expect_equal(tuple[0], "member1");
+	tuple = .{ "member1", 2, Fruit.kiwi }
+	assert tuple[0] == "member1"
+	assert tuple[1] == 2
+	assert tuple[3] == Fruit.kiwi
 }
 
-const Flags = struct u16 {
+class Flags extends u16 {
 	// Layout is big endian. May be converted to/from int type.
 	// value: 0000_0000_0000_0000
 	// field: 1223_3333_3444_4444
@@ -75,23 +72,22 @@ const Flags = struct u16 {
 	f4: u7,
 
 	test {
-		const flags = Flags{ .f1 = true, .f2 = .indeterminate, .f3 = u6.max, .f4 = 0 };
-		expect_equal(flags, 0b1111_1111_1000_0000);
+		flags = Flags{ .f1 = true, .f2 = .indeterminate, .f3 = u6.max, .f4 = 0 }
+		assert flags == 0b1111_1111_1000_0000
 	}
 };
 
-// Memory layout:
-// -  tag: enum
-// - value: [max_type_size]u8
-//   - laid out according to C ABI.
-const Tagged = union {
+// Memory layout: struct {
+//   tag: enum,
+//   value: max_type_size
+// }
+union Tagged {
 	small: i8,
 	big: f32,
 
 	test {
-		var tagged = TaggedUnion.small(3);
-		expect_equal(tagged.tag, .small);
-		// A C-compatible union value.
-		expect_equal(tagged.value, i32(1));
+		tagged = TaggedUnion.small(3)
+		expect @tag(tagged) == .small
+		expect tagged == 3
 	}
 };

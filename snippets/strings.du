@@ -1,11 +1,11 @@
 fn main() u8 {
-	const a =
+	a: []const u8 =
 		\\Hello world!
 		\\No ending spaces or tabs allowed at end of multiline string literals
 		\\because it's hard to read. Newlines are fine.
 		\\
 	;
-	const b = "asdf";
-	const c = 'g';
-	return a.len + b.len + c;
+	b = "asdf"
+	c = 'g'
+	return a.len + b.len + c
 }

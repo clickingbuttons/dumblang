@@ -1,0 +1,40 @@
+// Numeric types are range constraints for you and your compiler's sanity.
+// Unsupported larger types are emulated using smaller types.
+my_bool: [0, 1] = 1 // Valid: 0..1
+
+// IEEE 754-2008 binary types
+my_half: f16 = 1.1
+my_float: f32 = 2.2
+my_double: f64 = 3.3
+my_impl_detail: f80 = 4.4 // x86 extended-precision format
+my_quad: f128 = 5.5
+my_octuple: f256 = 6.6
+
+// If you omit the type, the compiler will choose the smallest possible type
+// of the assignment.
+my_integer = 32 // :[32, 32]
+
+// Compile-time ints and floats have infinite precision.
+my_integer: comptime_int = 14
+my_float: comptime_float = 15.4
+
+// The void type takes 0 bits.
+my_void: void
+my_void: [0,0]
+
+
+
+// These types are provided for C compatibility.
+my_integer: c_char = 17
+my_integer: c_short = 18
+my_integer: c_ushort = 19
+my_integer: c_int = 20
+my_integer: c_uint = 21
+my_integer: c_long = 22
+my_integer: c_ulong = 23
+my_integer: c_longlong = 24
+my_integer: c_ulonglong = 25
+my_integer: c_longdouble = 26.4 // 64-bit or 80-bit
+
+// The special type `type` includes all referenced types in the program.
+my_type: type = f64.type

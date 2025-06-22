@@ -1,0 +1,17 @@
+import std::callconv::c;
+
+// Block syntax
+double(n: u8) u8 {
+	return n * n;
+}
+
+// Arrow syntax
+double2(n: u8) u8 => n * n
+
+// Calling convention
+doubleC(n: u8) u8 callconv(c) => n * n
+
+// Variadic args?
+printf(...args) u8 => args.len
+
+

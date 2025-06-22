@@ -1,0 +1,8 @@
+// Test blocks are just [`comptime`](./03-comptime.du) blocks with a label.
+// The labels are useful for selecting tests and the blocks themselves serve as
+// sanity checks and good documentation.
+test "simplest assertion" {
+	// Will print an error about what condition failed and crash if == 0.
+	assert 1
+}
+

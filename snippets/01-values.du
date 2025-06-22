@@ -1,0 +1,23 @@
+// Values are a well-defined series of bits in memory that may be read from
+// and written to.
+
+test "integer literals" {
+	// Decimal literals may include a `_` every 3 digits from the right.
+	assert 1_000 == 1000
+	// Binary literals are useful for powers of 2, like transistors!
+	assert 0b10 == 2
+	// Octal literals are useful for powers of 8, like r/w/e permissions.
+	assert 0o10 == 8
+	// Hexadecimal literals are useful for powers of 16, like 2-byte groups.
+	assert 0xf == 16
+}
+
+test "floating point literals" {
+	// You may specify floating point literals using decimal scientific notation.
+	assert 123.456e-2 == 1.23456
+	// You may also specify a binary literal with a sign and the EXACT number of
+	// exponential and fractional bits.
+	assert -0b01111.1000000000 == -1.5 // a float16
+	// Any integer literal may be used in conjunction with a type constructor.
+	assert f32.mse(-0o3FF, 1000) == -1.5
+}

@@ -1,0 +1,18 @@
+// Dumblang assumes that you want to follow pointers. That means you must fully
+// specify what values they lead to.
+
+
+test pointers {
+	aligned: u8 align(4) = 100
+	// You may reference a pointer.
+	single = &aligned
+	// And dereference it to a well-defined type.
+	assert a.* == 3
+
+	my_slice: []u8 = [1, 2, 3]
+
+	assert my_slice[3] == 0
+
+	// You may specify a sentinel value at the end of a slice type.
+	c_string: [*:0]u8 = my_slice // at comptime will
+}

@@ -1,0 +1,67 @@
+// Variables allow you to alias [values](./01-values.du) to operate on.
+
+// Since computers do not quickly process arbitrary precision numbers it's a
+// necessary evil to specify a range your numeric types can hold.
+test "integer variable" {
+	my_integer: [-255, 255] = 0
+	assert my_integer == 0
+	my_integer = -255
+	assert my_integer == -255
+	my_integer = 255
+	assert my_integer == 255
+	// my_integer = 256 // Fails at compile time.
+	// my_integer = bad_user_input // Fails at runtime with the "safe" flag.
+}
+
+// Supported shorthands:
+// - Signed/unsigned integer: iX / uX
+// - IEEE 754-2008 binary types: f16, f32, f64, f128, f256
+// -
+test "integer variable shorthand" => assert i8 == [-255, 255]
+
+// Large ranges that are unsupported in hardware will be emulated in software.
+test "large integer type" {
+	my_integer: i256 = 123_456_789_123_456_789
+	assert my_integer == 123_456_789_123_456_789
+}
+
+// You may operate on numbers:
+// operator | precedence | associativity | function
+// ---------|-----------=|---------------|--------------------
+// ()       |         12 | ltr           | grouping
+// -        |         11 | rtl           | unary negation
+// ~        |         11 | rtl           | bitwise not
+// **       |         10 | ltr           | exponentiation
+// *        |          9 | ltr           | multiplication
+// /        |          9 | ltr           | division
+// %        |          9 | ltr           | remainder
+// /%       |          9 | ltr           | divmod
+// +        |          8 | ltr           | addition
+// -        |          8 | ltr           | subtraction
+// >>       |          7 | ltr           | bitwise right shift
+// <<       |          7 | ltr           | bitwise left shift
+// ==       |          6 | ltr           | equality comparison
+// !=       |          6 | ltr           | non-equality comparison
+// &        |          5 | ltr           | bitwise and
+// ^        |          4 | ltr           | bitwise xor
+// |        |          3 | ltr           | bitwise or
+// &&       |          2 | ltr           | logical and
+// ||       |          1 | ltr           | logical or
+// =        |          0 | rtl           | assignment
+// += -=    |          0 | rtl           | ...by sum/difference
+// *= /=    |          0 | rtl           | ...by multiplication/division
+// %= /%=   |          0 | rtl           | ...by remainder/division+remainder
+// <<= >>=  |          0 | rtl           | ...by left/right bitshift
+// &= ^= |= |          0 | rtl           | ...by logical and/xor/or
+
+test "operator precedence" {
+	TODO
+}
+
+// Ranges are inferred based on their assignment to be the smallest possible.
+// Be careful omitting ranges: you can quickly end up with large precision!
+test "integer range inference" {
+	my_integer: i8 = i8::max
+	my_other_integer = my_integer * my_integer
+	assert my_other_integer::type == i16
+}

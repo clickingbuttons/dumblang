@@ -1,0 +1,24 @@
+// You may specify the `comptime` keyword before a value or block to run it at
+// compile time. This allows for generics and arbitrary initialization.
+// There are some limitations:
+// - list limitations here
+
+use std::ArrayList
+
+a: []u8 = comptime {
+	res = ArrayList(u8)
+	for 0..4 |i| res.push(i)
+	return res.array
+}
+
+// Test blocks are just `comptime` blocks with a label. This is useful for
+// running only the tests you care about and documentation.
+test "generating generic type" {
+	assert a == u8[1,2,3]
+
+	struct T {
+		field: [0, a.sum() + 2]
+	}
+	assert T.field == [0, 8]
+}
+

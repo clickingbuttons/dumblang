@@ -1,6 +1,0 @@
-//! This is a module doc.
-
-/// This is a function doc.
-fn main() u8 => 0
-
-// This is a normal comment and can be ignored when lexing.

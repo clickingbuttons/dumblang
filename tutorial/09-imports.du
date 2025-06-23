@@ -1,0 +1,24 @@
+// You can import exports using a path relative to this file.
+import ./08-exports.du::answer,foo
+
+// You can also import the whole namespace.
+namespace = import ./08-exports.du
+
+test "relative imports" {
+	assert answer == namespace.answer
+	assert foo == namespace.foo
+
+	assert answer == 42 && namespace.answer == 42
+	foo()
+	assert answer == 0 && namespace.answer == 0
+}
+
+// You may also configure root prefixes in `build.du`.
+// The `std` is included by default.
+import std::ArrayList
+
+test "std import" {
+	arr = ArrayList(u8)
+	arr += 4
+	assert arr[0] == 4
+}

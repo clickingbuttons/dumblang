@@ -1,0 +1,14 @@
+// Dumblang offers an allocator interface and configurable global allocator.
+// Allocators are thread safe.
+
+// TODO: make the pointer types not suck. maybe make comptime? maybe allow
+// casting T[1] -> T?
+interface Allocator {
+	Error = enum { OOM }
+	alloc(n_bytes: usize, comptime alignment = 1) Error!*u8[] align(alignment)
+	realloc(comptime ptr: *u8[], n_bytes: usize) Error!*u8[] align(@alignOf(ptr))
+	free(ptr: *u8[])
+
+	create(comptime T: type) Error!*T
+	destroy(ptr: *any)
+}

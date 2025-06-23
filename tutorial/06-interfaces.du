@@ -3,16 +3,15 @@
 Size = usize
 Offset = isize
 EOF = 0..0
+union Error { premature_end: Size }
+enum Whence { start cur end }
 
 interface Stream {
-	// Attempts to read entire buffer.
-	reader: ?*(buf: []u8) Size!union{ EOF, Error }
-	seeker: ?*(offset: Offset, w: Whence) Offset!Error
-	closer: ?*() !Error
-	copier: ?*(from: Stream) Size!Error
-	writer: ?*(buf: const []u8) Size!Error
+	reader(buf: []u8) Size!union{ EOF, Error }
+	writer(buf: const []u8) Size!Error
 
-	union Error { premature_end: Size }
-	enum Whence { start cur end }
+	seeker?(offset: Offset, w: Whence) Offset!Error
+	closer?() !Error
+	copier?(from: Stream) Size!Error
 };
 

@@ -1,0 +1,10 @@
+// Dumblang variables or function with the `pub` prefix are available to other
+// Dumblang code. When built as a library, these symbols are exported.
+
+pub answer = 42
+
+pub foo() => answer = 0
+
+// You may create a C ABI export by changing the calling convention. This
+// forces this scope and lower to be compiled.
+pub bar() callconv(c) u8 => 42

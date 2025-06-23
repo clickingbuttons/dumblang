@@ -1,4 +1,5 @@
 // Variables allow you to alias [values](./01-values.du) to operate on.
+// TODO: threadlocal, const
 
 // Since computers do not quickly process arbitrary precision numbers it's a
 // necessary evil to specify a range your numeric types can hold.
@@ -16,7 +17,8 @@ test "integer variable" {
 // Supported shorthands:
 // - Signed/unsigned integer: iX / uX
 // - IEEE 754-2008 binary types: f16, f32, f64, f128, f256
-// -
+// - IEEE 754-2008 decimal types???
+// - minifloats??
 test "integer variable shorthand" => assert i8 == [-255, 255]
 
 // Large ranges that are unsupported in hardware will be emulated in software.
@@ -54,9 +56,31 @@ test "large integer type" {
 // <<= >>=  |          0 | rtl           | ...by left/right bitshift
 // &= ^= |= |          0 | rtl           | ...by logical and/xor/or
 
+// TODO: decide on null coalescing operator `??` and `?.`
+
 test "operator precedence" {
-	TODO
+	// TODO: find good example set or write own
 }
+
+// TODO: decide on operator overloading
+test "operator overloading" {
+	class Imaginary {
+		real: i64,
+		imaginary: i64,
+
+		operator ++(rhs: Unreal) => Unreal {
+			.real = this.real + rhs.real,
+			.imaginary = this.imaginary + rhs.imaginary,
+		}
+
+		test {
+			a = Unreal{ .real = 1, .imaginary = 2 }
+			b = Unreal{ .real = 3, .imaginary = 4 }
+			assert a ++ b == Unreal{ 4, 6 }
+		}
+	}
+}
+
 
 // Ranges are inferred based on their assignment to be the smallest possible.
 // Be careful omitting ranges: you can quickly end up with large precision!
@@ -65,3 +89,52 @@ test "integer range inference" {
 	my_other_integer = my_integer * my_integer
 	assert my_other_integer::type == i16
 }
+
+test "shadowing" {
+	my_integer: i8 = 0
+	assert my_integer == 0
+
+	// If you don't specify a type, the same bits are used.
+	my_integer = 1
+	assert my_integer == 0
+
+	// Shadowing a previous name creates a new variable.
+	my_integer: i16 = 1
+	assert my_integer == 1
+}
+
+// Arbitrary precision hardware doesn't exist. For this reason you may add
+// range constraints to types so the computer can quickly read, write, and do
+// math on them. The constraints just might help your sanity too.
+test "value constraints" {
+	my_bool: 0..1 = 0
+	my_bool = 1
+	// my_bool = 2 // compile error
+
+	// If you omit the type, the compiler will infer the tighest constraint.
+	my_integer = 32 // 32..32
+	my_integer *= my_integer // 1024..1024
+}
+
+// Optionals may take on a "null" value.
+test "optionals" {
+	a: ?u8 = null
+	assert a == null
+	a = 32
+	assert a.? == 32
+}
+
+// test "thread local storage" {
+// threadlocal x: i32 = 1234
+//     const thread1 = std.Thread.spawn(.{}, test_tls, .{})!
+//     const thread2 = std.Thread.spawn(.{}, test_tls, .{})!
+//     test_tls()
+//     thread1.join()
+//     thread2.join()
+// }
+//
+// fn test_tls() void {
+//     assert(x == 1234)
+//     x += 1
+//     assert(x == 1235)
+// }

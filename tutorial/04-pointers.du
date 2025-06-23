@@ -1,0 +1,44 @@
+// Dumblang assumes that you want to follow pointers. That means you must fully
+// specify what values they lead to.
+
+test "int pointer" {
+	a: u8 = 100
+	a_ptr = &a
+	assert a_ptr.* == 100
+}
+
+test "slice pointer" {
+	my_slice = u8[1, 2, 3]
+	assert my_slice[2] == 3
+	assert my_slice.ptr > 0
+	assert my_slice.len == 4
+}
+
+test "sentinel slice pointer" {
+	c_string: [:0]u8 = "a"
+	assert c_string[2] == 0u8
+}
+
+test "function pointers" {
+	foo() => assert true
+	bar() => assert false
+
+	my_ptr: *(() => void) = &foo
+	my_ptr = &bar
+
+	my_ptr.*()
+}
+
+// Some hardware requires aligned pointers for certain operations. You may
+// specify that alignment in bits.
+test alignment {
+	a: u8 align(16) = 100
+	a_ptr: *u8 align(16) = &a
+
+	assert u32(a_ptr) % 16 == 0
+}
+
+// TODO: pointer int types:
+// - memory segmentation
+// - bit reservations
+// - alignment requirements

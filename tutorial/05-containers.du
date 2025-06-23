@@ -1,0 +1,112 @@
+// Containers hold multiple values together. They're useful for representing
+// objects.
+
+// Enums name integer values.
+test enums {
+	test basic {
+		enum Fruit {
+			banana // = 0
+			strawberry // = 1
+			kiwi // = 2
+
+			// You may add functions.
+			morph() Fruit => (this + 1) % 3
+		}
+
+		assert Fruit.banana == 0
+		// Fruit(4) // will panic
+		assert Fruit.banana.morph() == Fruit.strawberry
+
+		// Can start at any number and fields may skip.
+		enum Vegetable {
+			carrot = 1
+			broccoli = 3
+			spinach = 5
+		}
+
+		assert Vegetable.spinach == 5
+
+		test "convert to string" {
+			assert Fruit.banana.to_string() == "banana"
+		}
+	}
+
+	test integer {
+		enum Fruit {
+			banana
+			strawberry
+			kiwi
+			...255 // accepts any value up to 255
+		}
+
+		assert Fruit == 0..255 == u8
+		assert Fruit(4) == 4
+	}
+}
+
+// Structs are the best way to group variables.
+test structs {
+	struct Rect {
+		width: u8
+		height: u8
+
+		// By default a `this` member is available.
+		area() u8 => this.width * this.height
+	}
+
+	assert Rect{ width: 2, height: 4 }.area() == 8
+
+	test extension {
+		struct RectangularPrism : Rect {
+			depth: u8
+
+			// overrides allowed
+			area() u8 => Rect.area(self) * self.depth,
+		}
+
+		cube = RectangularPrism{ width: 1, height: 2, depth: 3 }
+		assert cube.area() == 8
+	}
+
+	test "field copying" {
+		struct RectangularPrism {
+			...Rect
+			depth: u8
+		}
+
+		cube = RectangularPrism{ width: 1, height: 2, depth: 3 }
+		assert cube.depth == 3
+		// assert cube.area() // no .area()
+	}
+
+	test "extend integer type" {
+		class Flags: u16 {
+			// value: 0b0000_0000_0000_0000
+			// field:   1223_3333_3444_4444
+			f1: u1,
+			f2: enum(u2) { off low medium high }
+			f3: u6,
+			f4: u7,
+
+			test {
+				flags = Flags{ f1: true, f2: .medium, f3: u6.max, f4: 0 }
+				assert flags == 0b1111_1111_1000_0000
+			}
+		};
+	}
+}
+
+test "tagged union" {
+	// Memory layout: struct {
+	//	tag: enum{ small, big }
+	//	value: f32
+	// }
+	union Tagged {
+		small: i8,
+		big: f32,
+	}
+
+	tagged = Tagged.small(3)
+	expect tagged::tag == Tagged::Tag.small
+	expect tagged == 3
+}

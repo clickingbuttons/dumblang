@@ -22,3 +22,9 @@ test "generating generic type" {
 	assert T.field == [0, 8]
 }
 
+test "array concatenation and repetition" {
+	arr1 = u8[1, 2, 3]
+	arr2 = u8[4, 5, 6]
+	assert arr1 + arr2 == u8[1, 2, 3, 4, 5, 6]
+	assert arr1 + u8[0] * 3 == u8[1, 2, 3, 0, 0, 0]
+}

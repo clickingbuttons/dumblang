@@ -1,0 +1,97 @@
+// Values are a well-defined series of bits in memory that may be read from
+// and written to. They can be initialized with literals at compile time.
+
+test "integer literals" {
+	// Binary literals are useful for powers of 2, like transistors!
+	assert 0b10 == 2
+	// Octal literals are useful for powers of 8, like r/w/e permissions.
+	assert 0o10 == 8
+	// Hexadecimal literals are useful for powers of 16, like 2-byte groups.
+	assert 0xf == 16
+
+	// All literals may include `_` for readability.
+	assert 1_000 == 1000
+}
+
+test "floating point literals" {
+	// Floating point literals using decimal scientific notation.
+	assert 123.456e-2 == 1.23456
+
+	// There are no binary, octal, or hex literals because they are confusing.
+	// If you want exact control over the bits of a float, bitcast an integer.
+	assert f32::bitcast(-0x3fc0_0000) == -1.5
+}
+
+// You may bitcast between any two types with the same number of bits.
+test "bitcasting" {
+	a: i32 = 0x3fc0_0000
+	b: f32 = 1.5
+
+	assert i32::bitcast(b) == a
+	assert f32::bitcast(a) == b
+}
+
+test "floating point special values" {
+	assert f32(0) == f32::bitcast(0x0000_0000)
+	assert f32(-0) == f32::bitcast(0x8000_0000)
+	assert f32::nan == f32::bitcast(0x7fc00000)
+	// If you want to make a signalling NaN or add a payload, you'll have to
+	// resort to an integer type.
+	assert f32::inf == f32::bitcast(0x7f800000)
+	assert -f32::inf == f32::bitcast(0xff800000)
+	// All NaNs are considered equal because that's what IEEE 754-2008 defines.
+	assert f32::nan == -f32::nan
+}
+
+test "array literals" {
+	assert u8[1,2,3][0] == 1
+	assert u8[1,2,3][1] == 2
+	assert u8[1,2,3][2] == 3
+}
+
+test "char literals" {
+	assert 'A' == 65
+	assert 'a' == 97
+}
+
+test "string literals" {
+	// Strings are interpreted as UTF8 byte arrays.
+	assert "asdf" == u8[97, 115, 100, 102]
+	assert "𝌆" == u8[240, 157, 140, 134]
+
+	// Multiline string literals may be escaped with `\\`. However, no unescaped
+	// trailing UTF8 whitespace characters are allowed except newlines.
+	assert \\ asdf
+		\\
+	== u8[97, 115, 100, 102, 10]
+}
+
+// A `type` is 0..N where N=unique types in the program.
+test "type literal" {
+	assert f64::type >= 0
+}
+
+test "C compatibility" {
+	assert c_char(1) == 0x1
+	assert c_short(-2) == -0x02 == ~0x02 + 1
+	assert c_ushort(3) == 0x03
+	assert c_int(-4) == -0x04
+	assert c_uint(4) == 0x05
+	assert c_long(4) == 
+	assert c_ulong(4) ==
+	assert c_longlong(4) ==
+	assert c_ulonglong(4) ==
+	assert c_longdouble(4) ==
+}
+
+// In "safe" mode you can only cast to the same size or larger bit widths.
+// In unsafe mode you'll get whatever the hardware defines -- usually
+// truncation.
+test "casting" {
+	a: u16 = 1_000
+
+	// assert u8(a) // compile error, with runtime value will panic
+	assert u8::trunc(a) == 255
+	assert u16(a)
+	assert u32(a)
+}

@@ -1,0 +1,18 @@
+// Interfaces define a set of functions and what they do.
+
+Size = usize
+Offset = isize
+EOF = 0..0
+
+interface Stream {
+	// Attempts to read entire buffer.
+	reader: ?*(buf: []u8) Size!union{ EOF, Error }
+	seeker: ?*(offset: Offset, w: Whence) Offset!Error
+	closer: ?*() !Error
+	copier: ?*(from: Stream) Size!Error
+	writer: ?*(buf: const []u8) Size!Error
+
+	union Error { premature_end: Size }
+	enum Whence { start cur end }
+};
+

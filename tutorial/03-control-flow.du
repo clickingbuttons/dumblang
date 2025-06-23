@@ -1,0 +1,107 @@
+// Control flow statements let you jump around in your program.
+// `if`, `for`, `switch`, `fn_call()`, `assert`, `defer`, `!` (suffix)
+
+test "if statement" {
+	// Block statement
+	if 1 {
+		assert 1
+	}
+
+	// Single line
+	if (1) assert 1
+
+	// Optional
+	a: ?u8 = 3
+	if (a) assert a == 3
+
+	// If statements are expressions
+	a = if (1) 42 else 0
+	assert a == 42
+}
+
+test "for loop over range" {
+	sum: u64 = 0
+	for 0..5 |n| sum += n * 2
+
+	assert sum == 20
+}
+
+test "for loop over slice" {
+	msg = "0123"
+	for msg |c: u8, i: usize| assert c == msg[i]
+}
+
+test "switch over value" {
+	a: u8 = 32
+	switch(a) {
+		0..100 => assert true
+		100..255 => assert false
+	}
+}
+
+test "switch over enum" {
+	enum Fruit {
+		banana
+		strawberry
+		kiwi
+		..255
+
+		color() []u8 => switch (val) {
+			banana => "yellow",
+			strawberry => "red",
+			kiwi => "green",
+			_ => "unknown"
+		}
+	}
+	expect Fruit.kiwi.color() == "green"
+	expect Fruit(9).color() == "unknown"
+}
+
+test "block function" {
+	double(n: u8) u8 {
+		return n * n;
+	}
+	assert double(2) == 4
+}
+
+test "arrow function" {
+	double(n: u8) u8 => n * n
+
+	assert double(2) == 4
+}
+
+test "variadic args function" {
+	printf(...args) u16 {
+		sum: u16 = 0
+		for args |_| sum += 1
+		return sum
+	}
+
+	assert printf(1, "2", 3.0) == u16(3)
+}
+
+test defer {
+	a: u8 = 1
+	defer {
+		a = 2
+		assert a == 2
+	}
+
+	assert a == 1
+}
+
+test "errors are values" {
+	// TODO: better example (runtime input?)
+	enum Error { broken }
+
+	always_errors() i32!Error => Error.broken
+	always_errors2() i32!Error => {
+		always_errors()!
+		assert false
+	}
+
+	test catch {
+		always_errors() |e| assert e == Error.broken
+		always_errors2() |e| assert e == Error.broken
+	}
+}

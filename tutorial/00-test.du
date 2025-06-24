@@ -1,4 +1,4 @@
-// Test blocks are just [`comptime`](./03-comptime.du) blocks with a label.
+// Test blocks are just [`comptime`](./07-comptime.du) blocks with a label.
 // The labels are useful for selecting tests and good documentation.
 
 test "simplest assertion" {

@@ -13,5 +13,4 @@ interface Stream {
 	seeker?(offset: Offset, w: Whence) Offset!Error
 	closer?() !Error
 	copier?(from: Stream) Size!Error
-};
-
+}

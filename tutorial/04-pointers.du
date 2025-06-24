@@ -31,7 +31,7 @@ test "function pointers" {
 
 // Some hardware requires aligned pointers for certain operations. You may
 // specify that alignment in bits.
-test alignment {
+test "alignment" {
 	a: u8 align(16) = 100
 	a_ptr: *u8 align(16) = &a
 

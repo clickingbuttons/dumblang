@@ -6,13 +6,9 @@ test "simplest assertion" {
 	assert 1
 }
 
-
 // You can nest test blocks.
 test "nested blocks" {
-	test "inner block 1" {
-		assert 1
-	}
-	test "inner block 2" {
-		assert 2
-	}
+	// You can write a single statement instead of a block one.
+	test "inner block 1" assert 1
+	test "inner block 2" assert 2
 }

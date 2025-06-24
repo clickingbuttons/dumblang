@@ -2,24 +2,38 @@
 // and written to. They can be initialized with literals at compile time.
 
 test "integer literals" {
-	// Binary literals are useful for powers of 2, like transistors!
+	// Binary literals are useful for powers of 2.
 	assert 0b10 == 2
 	// Octal literals are useful for powers of 8, like r/w/e permissions.
 	assert 0o10 == 8
 	// Hexadecimal literals are useful for powers of 16, like 2-byte groups.
 	assert 0xf == 16
 
-	// All literals may include `_` for readability.
+	// All literals may include `_` anywhere for readability.
 	assert 1_000 == 1000
 }
 
 test "floating point literals" {
-	// Floating point literals using decimal scientific notation.
+	// Decimal floating point literals can use scientific notation.
 	assert 123.456e-2 == 1.23456
 
 	// There are no binary, octal, or hex literals because they are confusing.
 	// If you want exact control over the bits of a float, bitcast an integer.
 	assert f32::bitcast(-0x3fc0_0000) == -1.5
+
+	test "special" {
+		assert f32(0) == f32::bitcast(0x0000_0000)
+		assert f32(-0) == f32::bitcast(0x8000_0000)
+		assert f32::nan == f32::bitcast(0x7fc00000)
+
+		// If you want to make a signalling NaN or add a payload, you'll have to
+		// resort to an integer type.
+		assert f32::inf == f32::bitcast(0x7f800000)
+		assert -f32::inf == f32::bitcast(0xff800000)
+
+		// All NaNs are considered equal because that's what IEEE 754-2008 defines.
+		assert f32::nan == -f32::nan
+	}
 }
 
 // You may bitcast between any two types with the same number of bits.
@@ -29,18 +43,6 @@ test "bitcasting" {
 
 	assert i32::bitcast(b) == a
 	assert f32::bitcast(a) == b
-}
-
-test "floating point special values" {
-	assert f32(0) == f32::bitcast(0x0000_0000)
-	assert f32(-0) == f32::bitcast(0x8000_0000)
-	assert f32::nan == f32::bitcast(0x7fc00000)
-	// If you want to make a signalling NaN or add a payload, you'll have to
-	// resort to an integer type.
-	assert f32::inf == f32::bitcast(0x7f800000)
-	assert -f32::inf == f32::bitcast(0xff800000)
-	// All NaNs are considered equal because that's what IEEE 754-2008 defines.
-	assert f32::nan == -f32::nan
 }
 
 test "array literals" {

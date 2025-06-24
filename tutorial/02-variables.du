@@ -19,7 +19,7 @@ test "integer variable" {
 // - IEEE 754-2008 binary types: f16, f32, f64, f128, f256
 // - IEEE 754-2008 decimal types???
 // - minifloats??
-test "integer variable shorthand" => assert i8 == [-255, 255]
+test "integer variable shorthand" assert i8 == [-255, 255]
 
 // Large ranges that are unsupported in hardware will be emulated in software.
 test "large integer type" {
@@ -59,11 +59,11 @@ test "large integer type" {
 // TODO: decide on null coalescing operator `??` and `?.`
 // TODO: add saturating and wrapping addition, subtraction, and multiplication
 
-test operator precedence {
+test "operator precedence" {
 	// TODO: find good example set or write own
 }
 
-test operator overloading {
+test "operator overloading" {
 	struct Imaginary {
 		real: i64
 		imaginary: i64
@@ -94,11 +94,11 @@ test "shadowing" {
 	my_integer: i8 = 0
 	assert my_integer == 0
 
-	// If you don't specify a type, the same bits are used.
 	my_integer = 1
-	assert my_integer == 0
+	assert my_integer == 1
 
-	// Shadowing a previous name creates a new variable.
+	// Shadowing a previous name with a new type creates a new variable. The old
+	// one is inaccessible, so make sure you're done with it.
 	my_integer: i16 = 1
 	assert my_integer == 1
 }
@@ -124,17 +124,17 @@ test "optionals" {
 	assert a.? == 32
 }
 
-// test "thread local storage" {
-// threadlocal x: i32 = 1234
-//     const thread1 = std.Thread.spawn(.{}, test_tls, .{})!
-//     const thread2 = std.Thread.spawn(.{}, test_tls, .{})!
-//     test_tls()
-//     thread1.join()
-//     thread2.join()
-// }
-//
-// fn test_tls() void {
-//     assert(x == 1234)
-//     x += 1
-//     assert(x == 1235)
-// }
+test "thread local storage" {
+	threadlocal x: i32 = 1234
+
+	test_tls() {
+		assert(x == 1234)
+		x += 1
+		assert(x == 1235)
+	}
+	thread1 = std.Thread.spawn({}, test_tls)!
+	thread2 = std.Thread.spawn({}, test_tls)!
+	test_tls()
+	thread1.join()
+	thread2.join()
+}

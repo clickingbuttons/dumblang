@@ -1,27 +1,29 @@
-// Control flow statements let you jump around in your program.
-// `if`, `for`, `switch`, `fn_call()`, `assert`, `defer`, `!` (suffix)
+// Control flow statements let you conditionally execute logic.
 
 test "if statement" {
-	// Block statement
-	if 1 {
-		assert 1
-	}
+	// Block statements
+	if 1 { assert 1 }
+	if (1) { assert 1 }
 
-	// Single line
+	// Single statement
 	if (1) assert 1
 
 	// Optional
 	a: ?u8 = 3
 	if (a) assert a == 3
 
-	// If statements are expressions
+	// If statements are expressions. There are no ternaries.
 	a = if (1) 42 else 0
 	assert a == 42
 }
 
 test "for loop over range" {
 	sum: u64 = 0
-	for 0..5 |n| sum += n * 2
+
+	// You MUST capture the value of ranges with `||`. If you want to discard
+	// the capture, just use `|_|`.
+	// The type of range variables is `usize`.
+	for 0..5 |n: usize| sum += n * 2
 
 	assert sum == 20
 }
@@ -31,30 +33,29 @@ test "for loop over slice" {
 	for msg |c: u8, i: usize| assert c == msg[i]
 }
 
+test "traditional for loop" {
+	sum: u64 = 0
+
+	for (i: i16 = 0; i < 5; i += 1) sum += i * 2
+
+	assert sum == 20
+
+	sum = 0
+	// There are no while loops. Just use `for`.
+	for (;1) {
+		sum += 1
+		if (sum == 20) break;
+	}
+
+	assert sum == 20
+}
+
 test "switch over value" {
 	a: u8 = 32
 	switch(a) {
-		0..100 => assert true
-		100..255 => assert false
+		1..100 => assert true
+		0, 100..255 => assert false
 	}
-}
-
-test "switch over enum" {
-	enum Fruit {
-		banana
-		strawberry
-		kiwi
-		..255
-
-		color() []u8 => switch (val) {
-			banana => "yellow",
-			strawberry => "red",
-			kiwi => "green",
-			_ => "unknown"
-		}
-	}
-	expect Fruit.kiwi.color() == "green"
-	expect Fruit(9).color() == "unknown"
 }
 
 test "block function" {
@@ -80,7 +81,7 @@ test "variadic args function" {
 	assert printf(1, "2", 3.0) == u16(3)
 }
 
-test defer {
+test "defer" {
 	a: u8 = 1
 	defer {
 		a = 2
@@ -100,7 +101,7 @@ test "errors are values" {
 		assert false
 	}
 
-	test catch {
+	test "catch" {
 		always_errors() |e| assert e == Error.broken
 		always_errors2() |e| assert e == Error.broken
 	}

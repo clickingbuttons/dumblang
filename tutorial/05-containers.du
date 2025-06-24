@@ -2,8 +2,8 @@
 // objects.
 
 // Enums name integer values.
-test enums {
-	test basic {
+test "enums" {
+	test "basic" {
 		enum Fruit {
 			banana // = 0
 			strawberry // = 1
@@ -31,7 +31,7 @@ test enums {
 		}
 	}
 
-	test integer {
+	test "integer" {
 		enum Fruit {
 			banana
 			strawberry
@@ -44,8 +44,26 @@ test enums {
 	}
 }
 
+test "switch over enum" {
+	enum Fruit {
+		banana
+		strawberry
+		kiwi
+		..255
+
+		color() []u8 => switch (val) {
+			banana => "yellow",
+			strawberry => "red",
+			kiwi => "green",
+			_ => "unknown"
+		}
+	}
+	expect Fruit::kiwi.color() == "green"
+	expect Fruit(9).color() == "unknown"
+}
+
 // Structs are the best way to group variables.
-test structs {
+test "structs" {
 	struct Rect {
 		width: u8
 		height: u8
@@ -56,7 +74,7 @@ test structs {
 
 	assert Rect{ width: 2, height: 4 }.area() == 8
 
-	test extension {
+	test "extension" {
 		struct RectangularPrism : Rect {
 			depth: u8
 
@@ -83,10 +101,10 @@ test structs {
 		struct Flags: u16 {
 			// value: 0b0000_0000_0000_0000
 			// field:   1223_3333_3444_4444
-			f1: u1,
+			f1: u1
 			f2: enum(u2) { off low medium high }
-			f3: u6,
-			f4: u7,
+			f3: u6
+			f4: u7
 
 			test {
 				flags = Flags{ f1: 1, f2: Flags.f2::medium, f3: u6::max, f4: 0 }
@@ -101,8 +119,8 @@ test "tagged union" {
 	// tag: enum{ small, big }
 	// value: f32
 	union Tagged {
-		small: i8,
-		big: f32,
+		small: i8
+		big: f32
 	}
 
 	tagged = Tagged.small(3)

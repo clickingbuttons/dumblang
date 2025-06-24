@@ -57,6 +57,7 @@ test "large integer type" {
 // &= ^= |= |          0 | rtl           | ...by logical and/xor/or
 
 // TODO: decide on null coalescing operator `??` and `?.`
+// TODO: add saturating and wrapping addition, subtraction, and multiplication
 
 test "operator precedence" {
 	// TODO: find good example set or write own

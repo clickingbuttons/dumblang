@@ -59,25 +59,24 @@ test "large integer type" {
 // TODO: decide on null coalescing operator `??` and `?.`
 // TODO: add saturating and wrapping addition, subtraction, and multiplication
 
-test "operator precedence" {
+test operator precedence {
 	// TODO: find good example set or write own
 }
 
-// TODO: decide on operator overloading
-test "operator overloading" {
-	class Imaginary {
-		real: i64,
-		imaginary: i64,
+test operator overloading {
+	struct Imaginary {
+		real: i64
+		imaginary: i64
 
 		operator ++(rhs: Unreal) => Unreal {
-			.real = this.real + rhs.real,
-			.imaginary = this.imaginary + rhs.imaginary,
+			real: this.real + rhs.real,
+			imaginary: this.imaginary + rhs.imaginary,
 		}
 
 		test {
-			a = Unreal{ .real = 1, .imaginary = 2 }
-			b = Unreal{ .real = 3, .imaginary = 4 }
-			assert a ++ b == Unreal{ 4, 6 }
+			a = Unreal{ real: 1, imaginary: 2 }
+			b = Unreal{ real: 3, imaginary: 4 }
+			assert a ++ b == Unreal{ real: 4, imaginary: 6 }
 		}
 	}
 }

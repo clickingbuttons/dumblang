@@ -80,7 +80,7 @@ test structs {
 	}
 
 	test "extend integer type" {
-		class Flags: u16 {
+		struct Flags: u16 {
 			// value: 0b0000_0000_0000_0000
 			// field:   1223_3333_3444_4444
 			f1: u1,
@@ -89,7 +89,7 @@ test structs {
 			f4: u7,
 
 			test {
-				flags = Flags{ f1: true, f2: .medium, f3: u6.max, f4: 0 }
+				flags = Flags{ f1: 1, f2: Flags.f2::medium, f3: u6::max, f4: 0 }
 				assert flags == 0b1111_1111_1000_0000
 			}
 		};
@@ -97,10 +97,9 @@ test structs {
 }
 
 test "tagged union" {
-	// Memory layout: struct {
-	//	tag: enum{ small, big }
-	//	value: f32
-	// }
+	// Memory layout:
+	// tag: enum{ small, big }
+	// value: f32
 	union Tagged {
 		small: i8,
 		big: f32,

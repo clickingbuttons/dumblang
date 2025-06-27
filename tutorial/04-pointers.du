@@ -1,5 +1,6 @@
 // Dumblang assumes that you want to follow pointers. That means you must fully
 // specify what values they lead to.
+import std::datetime::Nano
 
 test "int pointer" {
 	a: u8 = 100
@@ -16,16 +17,17 @@ test "slice pointer" {
 
 test "sentinel slice pointer" {
 	c_string: [:0]u8 = "a"
-	assert c_string[2] == 0u8
+	assert c_string[2] == u8(0)
 }
 
 test "function pointers" {
 	foo() => assert true
-	bar() => assert false
+	bar() => assert true
 
 	my_ptr: *(() => void) = &foo
-	my_ptr = &bar
+	my_ptr.*()
 
+	my_ptr = &bar
 	my_ptr.*()
 }
 
@@ -36,6 +38,25 @@ test "alignment" {
 	a_ptr: *u8 align(16) = &a
 
 	assert u32(a_ptr) % 16 == 0
+}
+
+// You can use the "volatile" type qualifer on variables or pointers. When used
+// on variables all pointers are volatile.
+test "volatile" {
+	nanotime = Nano.now()
+	d = f64(0)
+	for 0..10_000 |n| for 0..10_000 |m| d += d * n * m
+	non_volatile_runtime = Nano.now() - nanotime
+
+	nanotime = Nano.now()
+	vd: volatile f64 = 0
+	for 0..10_000 |n| for 0..10_000 |m| {
+		prod = vd * n * m // reads from a volatile
+		vd += prod // reads from and writes to a volatile
+	}
+	volatile_runtime = Nano.now() - nanotime
+
+	assert volatile_runtime > non_volatile_runtime
 }
 
 // TODO: pointer int types:

@@ -12,3 +12,9 @@ test "nested blocks" {
 	test "inner block 1" assert 1
 	test "inner block 2" assert 2
 }
+
+// Finally, this is the only syntax for comments. Their location is significant
+// when generating documentation:
+// - Module comments start on the first line of the file
+// - Function comments come directly before the function definition.
+// TODO: decide function doc syntax

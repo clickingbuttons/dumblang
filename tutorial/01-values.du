@@ -66,6 +66,10 @@ test "string literals" {
 	assert \\ asdf
 		\\
 	== u8[97, 115, 100, 102, 10]
+
+	// Finally, you may embed files.
+	// TODO: decide on builtin syntax and scope
+	assert @embedFile("./02-variables.du")[0..3] == "// "
 }
 
 // A `type` is 0..N where N=unique types in the program.

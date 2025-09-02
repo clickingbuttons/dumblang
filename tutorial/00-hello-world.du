@@ -1,0 +1,7 @@
+// Main is a parameterless function that may return a void error type.
+// Arguments are handled through `std.os.args`.
+// Exit codes are handled through `std.os.exit`.
+
+@export main() {
+	@printf("Hello, world!\n")
+}

@@ -1,8 +1,12 @@
 // Variables allow you to alias [values](./01-values.du) to operate on.
-import build::flags
-
 // Since computers do not quickly process arbitrary precision numbers it's a
 // necessary evil to specify a range your numeric types can hold.
+
+globalStatic = 42
+test "global static" {
+	assert globalStatic == 42
+}
+
 test "integer variable" {
 	my_integer: [-255, 255] = 0
 	assert my_integer == 0
@@ -25,13 +29,6 @@ test "integer variable shorthand" assert i8 == [-255, 255]
 test "large integer type" {
 	my_integer: i256 = 123_456_789_123_456_789
 	assert my_integer == 123_456_789_123_456_789
-}
-
-test "undefined variable" {
-	a: u16
-
-	// In "safe" mode, 0xaa to help catch bugs
-	if (flags.safe) assert a == u16(0xaa)
 }
 
 // You may operate on numbers:
@@ -74,22 +71,6 @@ test "operator precedence" {
 	// TODO: find good example set or write own
 }
 
-test "operator overloading" {
-	struct Imaginary {
-		real: i64
-		imaginary: i64
-
-		operator `+(rhs: Unreal) => Unreal {
-			real: this.real + rhs.real,
-			imaginary: this.imaginary + rhs.imaginary,
-		}
-	}
-
-	a = Imaginary{ real: 1, imaginary: 2 }
-	b = Imaginary{ real: 3, imaginary: 4 }
-	assert a ++ b == Imaginary{ real: 4, imaginary: 6 }
-}
-
 // Ranges are inferred based on their assignment to be the smallest possible.
 // Be careful omitting ranges: you can quickly end up with large precision!
 test "integer range inference" {
@@ -98,22 +79,32 @@ test "integer range inference" {
 	assert my_other_integer::type == i16
 }
 
+// Shadowing is allowed in new scopes.
 test "shadowing" {
 	my_integer: i8 = 0
 	assert my_integer == 0
 
+	// Reassignment
 	my_integer = 1
-	assert my_integer == 1
+	assert my_integer == i8(1)
 
-	// Shadowing a previous name with a new type creates a new variable. The old
-	// one is inaccessible, so make sure you're done with it.
-	my_integer: i16 = 1
-	assert my_integer == 1
+	// Compile error.
+	// my_integer: i16 = 1
+
+	{
+		// Shadowed.
+		my_integer: u16 = 3
+		assert my_integer == u16(3)
+	}
+
+	// Shadowed, refers to the function parameter
+	square = (my_integer) => my_integer * my_integer
+	assert square(2) == 4
 }
 
 // Arbitrary precision hardware doesn't exist. For this reason you may add
-// range constraints to types so the computer can quickly read, write, and do
-// math on them. The constraints just might help your sanity too.
+// range constraints to types for compiler optimization. They may also help
+// you solve equations.
 test "value constraints" {
 	my_bool: 0..1 = 0
 	my_bool = 1
@@ -132,36 +123,23 @@ test "optionals" {
 	assert a.? == 32
 }
 
-// Vectors have length and base type
-test "vectors" {
-	Vec4 = Vector(4, i32)
-	a: Vec4 = [1, 2, 3, 4]
-	b: Vec4 = [5, 6, 7, 8]
-
-	c = a + b
-	assert c == Vec4(6, 8, 10, 12)
-}
-
-// Arrays and vectors may be destructured
+// Arrays may be destructured.
 test "destructuring" {
 	a, b, c, d = i32[1, 2, 3, 4]
 	assert a == i32(1) && b == i32(2) && c == i32(3) && d == i32(4)
-
-	a, b, c, d = Vector(4, i32)[1, 2, 3, 4]
-	assert a == i32(1) && b == i32(2) && c == i32(3) && d == i32(4)
 }
 
-test "thread local storage" {
-	threadlocal x: i32 = 1234
-
-	test_tls() {
-		assert(x == 1234)
-		x += 1
-		assert(x == 1235)
-	}
-	thread1 = std.Thread.spawn({}, test_tls)!
-	thread2 = std.Thread.spawn({}, test_tls)!
-	test_tls()
-	thread1.join()
-	thread2.join()
-}
+// test "thread local storage" {
+// 	threadlocal x: i32 = 1234
+// 
+// 	test_tls() {
+// 		assert(x == 1234)
+// 		x += 1
+// 		assert(x == 1235)
+// 	}
+// 	thread1 = std.Thread.spawn({}, test_tls)!
+// 	thread2 = std.Thread.spawn({}, test_tls)!
+// 	test_tls()
+// 	thread1.join()
+// 	thread2.join()
+// }

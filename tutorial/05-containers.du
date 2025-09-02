@@ -112,6 +112,22 @@ test "structs" {
 			}
 		};
 	}
+
+	test "operator overloading" {
+		struct Imaginary {
+			real: i64
+			imaginary: i64
+
+			operator `+(rhs: Unreal) => Unreal {
+				real: this.real + rhs.real,
+				imaginary: this.imaginary + rhs.imaginary,
+			}
+		}
+
+		a = Imaginary{ real: 1, imaginary: 2 }
+		b = Imaginary{ real: 3, imaginary: 4 }
+		assert a ++ b == Imaginary{ real: 4, imaginary: 6 }
+	}
 }
 
 test "tagged union" {

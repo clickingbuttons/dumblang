@@ -1,20 +1,9 @@
-// Test blocks are just [`comptime`](./07-comptime.du) blocks with a label.
-// The labels are useful for selecting tests and good documentation.
+// Test blocks are labeled function bodies. You MUST include a label. They are
+// useful for selecting tests and good documentation.
 
-test "simplest assertion" {
-	// If == 0 prints an error about what condition failed.
-	assert 1
-}
+test "simplest assertion" assert 1
 
-// You can nest test blocks.
 test "nested blocks" {
-	// You can write a single statement instead of a block one.
 	test "inner block 1" assert 1
 	test "inner block 2" assert 2
 }
-
-// Finally, this is the only syntax for comments. Their location is significant
-// when generating documentation:
-// - Module comments start on the first line of the file
-// - Function comments come directly before the function definition.
-// TODO: decide function doc syntax

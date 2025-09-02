@@ -1,0 +1,12 @@
+// This is a module comment because it starts on the first line of the file AND
+// is not directly before a function.
+// The default documentation generator expects comments in
+// [Markdown format](https://commonmark.org/help/).
+
+// This is a function comment.
+double = (
+	// This is a parameter comment.
+	bar: u8,
+) {
+	return bar * 2
+}

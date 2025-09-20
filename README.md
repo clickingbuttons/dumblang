@@ -21,13 +21,18 @@ Dumblang is a:
 
 ## Building
 
-- C11 compiler
-- Make
+- C23 compiler
+- CMake
+
+```sh
+cmake -B build .
+cmake --build build
+```
 
 ### To bootstrap, or not to bootstrap?
 
-Before writing the first Dumblang compiler, I considered whether to quickly
-bootstrap it or slowly write a C implementation.
+Before writing the first Dumblang compiler, I considered whether to bootstrap
+it so I could implement it in Dumblang.
 
 #### Pros:
 - Language features

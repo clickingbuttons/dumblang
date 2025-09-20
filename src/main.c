@@ -1,4 +1,3 @@
-#include "ir.h"
 #include "link/elf.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,18 +8,6 @@
 	perror(#x); \
 	exit(1);  \
 }
-
-Variable sample_vars[] = {
-	// { .name = "reg1", .default_ = { .tag = u8, .value = 0 } }
-};
-
-Instruction sample_instructions[] = {
-	{
-		union_init(mov, {}),
-		union_init(variable, { "res" COMMA u8 }),
-		union_init(immediate, union_init(u8, 1)),
-	},
-};
 
 int main(int argc, char* argv[]) {
 	Elf linker = { 0 };

@@ -16,6 +16,7 @@ int elf_init(Elf* ctx, const char* fname) {
 
 	// skip header, we'll come back to it in `deinit`
 	size_t header_len = ctx->is32 ? sizeof(Elf32_Ehdr) : sizeof(Elf64_Ehdr);
+	printf("header_len %lu %lu\n", sizeof(Elf32_Ehdr), sizeof(Elf64_Ehdr));
 	CHECK_ERRNO(fseek(ctx->out, header_len, SEEK_SET));
 
 	return 0;

@@ -1,5 +1,6 @@
 #pragma once
 
+// https://fasterthanli.me/series/making-our-own-executable-packer
 #include <stdio.h>
 #include <stdbool.h>
 #include "../../vendor/elf.h"

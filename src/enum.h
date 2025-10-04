@@ -1,7 +1,9 @@
 // This allows expanding macros somewhat recursively to enable expressive
 // one-liners.
 // https://mailund.dk/posts/macro-metaprogramming/
+// Yeah, it's ugly, but it beats all other enum preprocessing I could find.
 #pragma once
+
 #include <string.h>
 
 #define expand_1(...) __VA_ARGS__
@@ -54,7 +56,7 @@
 	const char* name##_strings[] = { map(STRING_ELE, __VA_ARGS__) }; \
 	static name string_to_##name(const char* s) { \
 		for (int i = 0; i < COUNT_OF(name##_strings); i++) { \
-			if (strcmp(name##_strings[i], s)) return i; \
+			if (strcmp(name##_strings[i], s) == 0) return i; \
 		} \
 		return -1; \
 	}
